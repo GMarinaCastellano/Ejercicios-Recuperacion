@@ -36,6 +36,8 @@ if (isset($_POST['nombreUsuario'])) {
         $usuarioPreparado = "INSERT INTO jugadores (nombre,password,equipo) VALUES ('".$_POST['nombreUsuario']."','".$_POST['contraseña']."','".$_POST['equipo']."')";
         if ($conexion->query($usuarioPreparado) === TRUE) {
             echo "Has creado un nuevo jugador";
+            header("Location: login.php");
+            exit;
         } else {
             echo "Error: " . $sql . "<br>" . $conn->error;
         }
