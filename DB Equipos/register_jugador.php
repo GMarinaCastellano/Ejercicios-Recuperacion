@@ -27,27 +27,33 @@ while ($filaContraseñas = mysqli_fetch_array($contraseñas)) {
     echo $filaContraseñas['password'];
 }
 
-/* $arrayComprobar = ["uno","dos","tres"];
-$arrayDeArray = ["primer"=>$arrayComprobar];
-while ($arrayDeArray) {
-    echo $arrayDeArray['primer'];
-}*/
 if (isset($_POST['nombreUsuario'])) {
-    $nombreRepetido = in_array($_POST['nombreUsuario'],mysqli_fetch_array($nombres));
-    $contraseñaRepetida =  in_array($_POST['contraseña'],mysqli_fetch_array($contraseñas));
-    $usuarioPreparado = "INSERT INTO jugadores (nombre,password) VALUES ('".$_POST['nombreUsuario']."','".$_POST['contraseña']."')";
-    
+    $consultaNombres = $conexion -> query("SELECT * FROM jugadores WHERE nombre='".$_POST['nombreUsuario']."'");
+    $nombreRepetido = $consultaNombres->num_rows > 0? true : false;
+    $consultaContraseña = $conexion -> query("SELECT * FROM jugadores WHERE password='".$_POST['contraseña']."'");
+    $contraseñaRepetida = $consultaContraseña->num_rows > 0 ? true : false;
+    if(!$nombreRepetido and !$contraseñaRepetida){
+        $usuarioPreparado = "INSERT INTO jugadores (nombre,password,equipo) VALUES ('".$_POST['nombreUsuario']."','".$_POST['contraseña']."','".$_POST['equipo']."')";
+        if ($conexion->query($usuarioPreparado) === TRUE) {
+            echo "Has creado un nuevo jugador";
+        } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
+    }
+      
 }
-/* if ( !$nombreRepetido && !$contraseñaRepetida) {
-    ;
-} */
+echo "<br>";
+var_export($_POST);
 ?>
 <body>
     <form method="post" action="register_jugador.php">
+        <label for="nombreUsuario">Nombre</label>
         <input type="text" name="nombreUsuario" maxlength="20">
+        <label for="contraseña">Contraseña</label>
         <input type="password" name="contraseña" maxlength="20" >
+        <label for="equipo">N. Equipo</label>
+        <input type="text" name="equipo" maxlength="2" >
         <input type="submit" value="Registrar">
     </form>
-    
 </body>
 </html>
